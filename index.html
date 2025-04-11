@@ -22,20 +22,16 @@
         target="_blank"
         rel="noopener noreferrer"
         >WebGL</a
-      >. The code is on GitHub at
-      <a
-        href="https://github.com/nmattia/quad-shader"
-        target="_blank"
-        rel="noopener noreferrer"
-        >nmattia/quad-shader</a
-      >.
+      >
+      using Vite and TypeScript. The animations on this page are generated on
+      the fly with WebGL fragment shaders.
     </p>
-    <div id="canvas-container">
-      <canvas id="glcanvas"></canvas>
+
+    <div class="canvas-container">
+      <canvas id="glcanvas-sphere"></canvas>
     </div>
 
     <p>
-      The animation above is generated on the fly via a WebGL fragment shader.
       With fragment shaders, you have control over each pixel's color, making it
       perfect for Creative Coding and generating textures and patterns
       procedurally.
@@ -43,18 +39,31 @@
 
     <p>
       WebGL runs on the GPU, allowing for smooth, high-frame-rate animations.
-      One frame of the animation above is rendered in 30us (2021 laptop),
-      equivalent to over <strong>30 thousand</strong> frames per second.
+      This template has <strong>no runtime dependencies</strong> and uses the
+      WebGL API directly.
+    </p>
+
+    <div class="canvas-container">
+      <canvas id="glcanvas-dots"></canvas>
+    </div>
+    <p>
+      The colors used by the shaders are derived from the page's CSS properties
+      — open your devtools and have some fun. The technique used is described in
+      <a
+        href="https://nmattia.com/posts/2025-01-29-shader-css-properties/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >this blog post</a
+      >.
     </p>
 
     <p>
-      This template has <strong>no dependencies</strong> and uses the WebGL API
-      directly. See more in the GitHub
+      The code for this page and the quad-shader library is on GitHub at
       <a
         href="https://github.com/nmattia/quad-shader"
         target="_blank"
         rel="noopener noreferrer"
-        >repository</a
+        >nmattia/quad-shader</a
       >.
     </p>
 
