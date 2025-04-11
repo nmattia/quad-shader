@@ -74,7 +74,7 @@ body {
   }
 }
 
-#canvas-container {
+.canvas-container {
   padding: var(--pad-big) 0;
 }
 

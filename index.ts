@@ -2,15 +2,11 @@
 // WebGL via the lib.
 import { attach } from "./src";
 
-// Read the .glsl file contents
-import fragShaderSrc from "./frag.glsl?raw";
+// Read the .glsl files
+import fragShaderSphereSrc from "./frag-sphere.glsl?raw";
+import fragShaderDotsSrc from "./frag-dots.glsl?raw";
 
-export function main() {
-  // The the canvas element we'll be drawing on
-  const canvas = document.querySelector("#glcanvas");
-  if (!(canvas instanceof HTMLCanvasElement))
-    throw new Error("No canvas found");
-
+function attachWithColors(canvas: HTMLCanvasElement, fragShaderSrc: string) {
   attach(canvas, fragShaderSrc, {
     // Function called before every render, used to update the colors used
     // in the shader
@@ -35,6 +31,21 @@ export function main() {
       );
     },
   });
+}
+
+export function main() {
+  // The the canvas element we'll be drawing on
+  let canvas = document.querySelector("#glcanvas-sphere");
+  if (!(canvas instanceof HTMLCanvasElement))
+    throw new Error("No canvas found");
+
+  attachWithColors(canvas, fragShaderSphereSrc);
+
+  canvas = document.querySelector("#glcanvas-dots");
+  if (!(canvas instanceof HTMLCanvasElement))
+    throw new Error("No canvas found");
+
+  attachWithColors(canvas, fragShaderDotsSrc);
 }
 
 // Parse an 'rgb(R, G, B)' (incl. alpha variations) string into numbers
