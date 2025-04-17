@@ -28,7 +28,7 @@ export type Attached = {
   state: State;
 };
 
-class QuadShader {
+export class QuadShader {
   // When set to false, the rendering loop stops
   public shouldRender = false;
 
