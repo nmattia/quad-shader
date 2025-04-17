@@ -4,7 +4,7 @@
 //
 // Only provides two uniforms: uTime (time in seconds since app start) and
 // uAspectRatio (ratio width/height of the canvas element). For more uniforms, use
-// the `WebGLRenderingContext` returned by `attach` or specify `beforeRender`.
+// the `uniformX` functions of `QuadShader`.
 
 const vertShaderSrc = `
 attribute vec2 aVertexPosition;
@@ -22,16 +22,131 @@ void main() {
 }
 `;
 
-export type Opts = {
-  beforeRender?: (attached: Omit<Attached, "restart">) => void;
-};
-
 /* The result of attaching the shader to a canvas */
 export type Attached = {
   gl: WebGLRenderingContext;
   state: State;
-  restart: () => void;
 };
+
+class QuadShader {
+  // When set to false, the rendering loop stops
+  public shouldRender = false;
+
+  // Uniform setters called on every render
+  private uniformUpdaters: (() => void)[] = [];
+
+  constructor(
+    private gl: WebGLRenderingContext,
+    public state: State,
+  ) {}
+
+  render() {
+    if (!this.shouldRender) {
+      return;
+    }
+
+    // Ask the browser to call us back soon
+    requestAnimationFrame(() => this.render());
+
+    resizeIfDimChanged(this.gl, this.state);
+
+    this.uniformUpdaters.forEach((u) => u());
+
+    this.drawQuad();
+  }
+
+  private drawQuad() {
+    // Draw the data
+    // NOTE: because our 4 vertices cover the entire canvas we don't even need to call
+    // e.g. gl.clear() to clear, since every pixel will be rewritten (even if possibly
+    // rewritten as black and/or transparent).
+    this.gl.drawArrays(
+      this.gl.TRIANGLE_STRIP /* draw triangles */,
+      0 /* Start at 0 */,
+      4 /* draw n vertices */,
+    );
+  }
+
+  // Set a uniform. If the provided value is a function, it is evaluated before every render
+  // and the returned value is set as a uniform.
+  uniform1f(name: string, val: number | (() => number)) {
+    const setUniform = (uVal: number) => {
+      this.gl.uniform1f(
+        this.gl.getUniformLocation(this.state.program, name),
+        uVal,
+      );
+    };
+
+    if (typeof val !== "function") {
+      setUniform(val);
+      return;
+    }
+
+    this.uniformUpdaters.push(() => setUniform(val()));
+  }
+
+  // See `uniform1f`.
+  uniform4f(
+    name: string,
+    val:
+      | [number, number, number, number]
+      | (() => [number, number, number, number]),
+  ) {
+    const setUniform = (uVal: [number, number, number, number]) => {
+      this.gl.uniform4f(
+        this.gl.getUniformLocation(this.state.program, name),
+        uVal[0],
+        uVal[1],
+        uVal[2],
+        uVal[3],
+      );
+    };
+
+    if (typeof val !== "function") {
+      setUniform(val);
+      return;
+    }
+
+    this.uniformUpdaters.push(() => setUniform(val()));
+  }
+}
+
+// Return a 'QuadShader' with following properties:
+//  * The shader is only rendered when the underlying canvas intersects the viewport
+//  * The uTime uniform is set to the time since page load in seconds
+export function animate(
+  canvas: HTMLCanvasElement,
+  fragShaderSrc: string,
+): QuadShader {
+  const attached = attach(canvas, fragShaderSrc);
+  const { state, gl } = attached;
+
+  const quadShader = new QuadShader(gl, state);
+
+  // Use an observer to start (resp. stop) the rendering loop whenver the canvas
+  // enters (resp. exits) the viewport.
+  const observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0]; // we only observe a single element
+
+      if (entry.isIntersecting) {
+        quadShader.shouldRender = true;
+        quadShader.render(); // kickstarts the rendering loop
+      } else {
+        quadShader.shouldRender = false;
+      }
+    },
+    {
+      /* by default, uses the viewport */
+    },
+  );
+
+  observer.observe(canvas);
+
+  quadShader.uniform1f("uTime", () => performance.now() / 1000);
+
+  return quadShader;
+}
 
 // The main function that sets everything up and starts the animation loop
 // NOTE: if the element is detached from the DOM, the rendering loop exits early
@@ -39,7 +154,6 @@ export type Attached = {
 export function attach(
   canvas: HTMLCanvasElement,
   fragShaderSrc: string,
-  opts?: Opts,
 ): Attached {
   // Get the WebGL context
   const gl = canvas.getContext("webgl");
@@ -103,18 +217,7 @@ export function attach(
 
   const state: State = { program, canvas, width: 0, height: 0 };
 
-  // Call our render function which kick-starts the animation loop
-  // (scheduled on the next tick to give the caller a change to use `gl`
-  // before the first render, if necessary)
-  setTimeout(() => render(gl, opts ?? {}, state));
-
-  const attached: Attached = {
-    gl,
-    state,
-    restart: () => requestAnimationFrame(() => render(gl, opts ?? {}, state)),
-  };
-
-  return attached;
+  return { gl, state };
 }
 
 // Some data stored across frames, used in rendering to the canvas and potentially
@@ -187,53 +290,10 @@ function loadShader(
   return shader;
 }
 
-// Render the vertices and everything in between
-function render(gl: WebGLRenderingContext, opts: Opts, state: State) {
-  if (!state.canvas.isConnected) {
-    // If the canvas is not in the DOM anymore, exit
-    return;
-  }
-
-  // Ask the browser to call us back soon
-  requestAnimationFrame(() => render(gl, opts, state));
-
-  // Check if canvas needs to be resized
-  const dimChanged = resizeIfDimChanged(gl, state);
-  if (dimChanged) {
-    // Compute the aspect ratio, which is then injected into the vertex shader and use
-    // to convert from normalized device coordinates (NDC, from (-1,-1) to (1,1)) to
-    // coordinates that include the actual aspect ratio (in case the canvas is not
-    // square).
-    const aspectRatio = state.width / state.height;
-    gl.uniform1f(
-      gl.getUniformLocation(state.program, "uAspectRatio"),
-      aspectRatio,
-    );
-  }
-
-  // Inject the current time into (fragment) shader
-  gl.uniform1f(
-    gl.getUniformLocation(state.program, "uTime"),
-    performance.now() / 1000.0 /* time in seconds */,
-  );
-
-  opts.beforeRender?.({ gl, state });
-
-  // With bound buffer, draw the data
-  // NOTE: because our 4 vertices cover the entire canvas we don't even need to call
-  // e.g. gl.clear() to clear, since every pixel will be rewritten (even if possibly
-  // rewritten as black and/or transparent).
-  gl.drawArrays(
-    gl.TRIANGLE_STRIP /* draw triangles */,
-    0 /* Start at 0 */,
-    4 /* draw n vertices */,
-  );
-}
-
 // Maintenance function to resize the canvas element if necessary.
 //
 // Returns `true` if dimensions changed; `false` otherwise.
-function resizeIfDimChanged(gl: WebGLRenderingContext, state: State): boolean {
+function resizeIfDimChanged(gl: WebGLRenderingContext, state: State) {
   const clientWidth = state.canvas.clientWidth;
   const clientHeight = state.canvas.clientHeight;
 
@@ -258,5 +318,38 @@ function resizeIfDimChanged(gl: WebGLRenderingContext, state: State): boolean {
 
   gl.viewport(0, 0, pxWidth, pxHeight);
 
-  return true;
+  // Compute the aspect ratio, which is then injected into the vertex shader and used
+  // to convert from normalized device coordinates (NDC, from (-1,-1) to (1,1)) to
+  // coordinates that include the actual aspect ratio (in case the canvas is not
+  // square).
+  const aspectRatio = state.width / state.height;
+  gl.uniform1f(
+    gl.getUniformLocation(state.program, "uAspectRatio"),
+    aspectRatio,
+  );
 }
+
+// Parse an 'rgb(R, G, B)' (incl. alpha variations) string into numbers
+// (r, g, b & a between 0 and 1)
+export const parseRGBA = (color: string): [number, number, number, number] => {
+  const rgb = color.match(
+    /rgb(a?)\((?<r>\d+), (?<g>\d+), (?<b>\d+)(, (?<a>\d(.\d+)?))?\)/,
+  )!.groups as any as { r: string; g: string; b: string; a?: string };
+
+  return [
+    Number(rgb.r) / 255,
+    Number(rgb.g) / 255,
+    Number(rgb.b) / 255,
+    Number(rgb.a ?? 1),
+  ];
+};
+
+// Read a style property with name 'propName' from element 'elem'. The property must be
+// RGBA (see 'parseRGBA').
+export const getComputedStylePropRGBA = (
+  elem: HTMLElement,
+  propName: string,
+): [number, number, number, number] => {
+  const computed = getComputedStyle(elem).getPropertyValue(propName);
+  return parseRGBA(computed);
+};
