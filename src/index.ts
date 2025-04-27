@@ -28,6 +28,13 @@ export type Attached = {
   state: State;
 };
 
+// Input types for uniforms
+type U1 = number;
+type U2 = [number, number];
+type U3 = [number, number, number];
+type U4 = [number, number, number, number];
+type Us = U1 | U2 | U3 | U4;
+
 export class QuadShader {
   // When set to false, the rendering loop stops
   public shouldRender = false;
@@ -70,12 +77,16 @@ export class QuadShader {
 
   // Set a uniform. If the provided value is a function, it is evaluated before every render
   // and the returned value is set as a uniform.
-  uniform1f(name: string, val: number | (() => number)) {
-    const setUniform = (uVal: number) => {
-      this.gl.uniform1f(
-        this.gl.getUniformLocation(this.state.program, name),
-        uVal,
-      );
+  //
+  // This is the generic version meant to be used by 'uniform[1234][if]`.
+  uniformf<A extends Us>(
+    glFunc: (a: WebGLUniformLocation | null, b: A) => void,
+    name: string,
+    val: A | (() => A),
+  ) {
+    const setUniform = (uVal: A) => {
+      const uLoc = this.gl.getUniformLocation(this.state.program, name);
+      glFunc(uLoc, uVal);
     };
 
     if (typeof val !== "function") {
@@ -86,29 +97,53 @@ export class QuadShader {
     this.uniformUpdaters.push(() => setUniform(val()));
   }
 
-  // See `uniform1f`.
-  uniform4f(
-    name: string,
-    val:
-      | [number, number, number, number]
-      | (() => [number, number, number, number]),
-  ) {
-    const setUniform = (uVal: [number, number, number, number]) => {
-      this.gl.uniform4f(
-        this.gl.getUniformLocation(this.state.program, name),
-        uVal[0],
-        uVal[1],
-        uVal[2],
-        uVal[3],
-      );
-    };
+  // See 'uniformf'.
+  uniform1f(name: string, val: U1 | (() => U1)) {
+    return this.uniformf((u, v) => this.gl.uniform1f(u, v), name, val);
+  }
 
-    if (typeof val !== "function") {
-      setUniform(val);
-      return;
-    }
+  uniform2f(name: string, val: U2 | (() => U2)) {
+    return this.uniformf((u, v) => this.gl.uniform2f(u, v[0], v[1]), name, val);
+  }
 
-    this.uniformUpdaters.push(() => setUniform(val()));
+  uniform3f(name: string, val: U3 | (() => U3)) {
+    return this.uniformf(
+      (u, v) => this.gl.uniform3f(u, v[0], v[1], v[2]),
+      name,
+      val,
+    );
+  }
+
+  uniform4f(name: string, val: U4 | (() => U4)) {
+    return this.uniformf(
+      (u, v) => this.gl.uniform4f(u, v[0], v[1], v[2], v[3]),
+      name,
+      val,
+    );
+  }
+
+  uniform1i(name: string, val: U1 | (() => U1)) {
+    return this.uniformf(this.gl.uniform1i, name, val);
+  }
+
+  uniform2i(name: string, val: U2 | (() => U2)) {
+    return this.uniformf((u, v) => this.gl.uniform2i(u, v[0], v[1]), name, val);
+  }
+
+  uniform3i(name: string, val: U3 | (() => U3)) {
+    return this.uniformf(
+      (u, v) => this.gl.uniform3i(u, v[0], v[1], v[2]),
+      name,
+      val,
+    );
+  }
+
+  uniform4i(name: string, val: U4 | (() => U4)) {
+    return this.uniformf(
+      (u, v) => this.gl.uniform4i(u, v[0], v[1], v[2], v[3]),
+      name,
+      val,
+    );
   }
 }
 
