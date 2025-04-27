@@ -1,6 +1,6 @@
 {
   "name": "quad-shader",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "type": "module",
   "files": [
     "README.md",
@@ -30,6 +30,6 @@
   "devDependencies": {
     "prettier": "^3.3.3",
     "typescript": "^5.2.2",
-    "vite": "^5.3.4"
+    "vite": "^6.3.3"
   }
 }
