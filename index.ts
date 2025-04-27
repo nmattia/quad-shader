@@ -10,11 +10,11 @@ function attachWithColors(canvas: HTMLCanvasElement, fragShaderSrc: string) {
   const quadShader = animate(canvas, fragShaderSrc);
 
   quadShader.uniform4f("uColPrimary", () =>
-    getComputedStylePropRGBA(quadShader.state.canvas, "color"),
+    getComputedStylePropRGBA(quadShader.canvas, "color"),
   );
 
   quadShader.uniform4f("uColPop", () =>
-    getComputedStylePropRGBA(quadShader.state.canvas, "accent-color"),
+    getComputedStylePropRGBA(quadShader.canvas, "accent-color"),
   );
 }
 
