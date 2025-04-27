@@ -34,6 +34,10 @@ h1 {
   padding-bottom: var(--pad);
 }
 
+h2 {
+  margin-top: calc(2 * var(--pad));
+}
+
 p {
   padding-bottom: var(--pad);
 }
@@ -43,35 +47,46 @@ body {
   margin: 0 auto;
 }
 
-/* In general, the width is at most 480px.
- * On mobile (< 480px) we limit the content to 450px
- * and set 15px of padding on either side.
+/* In general, the width is at most 620px.
+ * On mobile (< 621px) we limit the content to 600px
+ * and set 10px of padding on either side.
  *
  * On bigger screens, no padding, but we limit the content to
- * 450px (as well) and scale up the canvas to 480px.
+ * 600px (as well) and scale up the canvas to 620px.
  * */
-@media (width < 480px) {
+@media (width < 621px) {
   body {
-    max-width: 450px;
-    padding-left: 15px;
-    padding-right: 15px;
-  }
-
-  canvas {
-    width: 100%;
+    max-width: 600px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }
 
-@media (width > 480px) {
+canvas {
+  width: 100%;
+}
+
+@media (width > 620px) {
   body {
-    max-width: 450px;
+    max-width: 600px;
   }
 
   canvas {
-    width: 480px;
-    /* 15px = (480 - 450) / 2 */
-    transform: translateX(-15px);
+    width: 620px;
+    /* 10px = (620 - 600) / 2 */
+    transform: translateX(-10px);
   }
+
+  pre.shiki {
+    border-radius: 0.5em;
+    margin-left: -2em;
+    margin-right: -2em;
+  }
+}
+
+pre.shiki {
+  padding: 2em;
+  overflow-x: auto;
 }
 
 .canvas-container {
@@ -114,4 +129,9 @@ footer a:visited {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+canvas#glcanvas-sphere {
+  /* scaled down because it's a bit overwhelmin otherwise */
+  transform: scale(0.8);
 }

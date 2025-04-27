@@ -16,39 +16,138 @@
   <body>
     <h1>Easy 2D shader setup with quad-shader</h1>
     <p>
-      This is a template for getting started with
+      The
+      <a
+        href="https://github.com/nmattia/quad-shader"
+        target="_blank"
+        rel="noopener noreferrer"
+        ><code>quad-shader</code></a
+      >
+      JavaScript library helps you build
       <a
         href="https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API"
         target="_blank"
         rel="noopener noreferrer"
         >WebGL</a
       >
-      using Vite and TypeScript. The animations on this page are generated on
-      the fly with WebGL fragment shaders.
+      animations easily. The library has zero dependencies and is extremely
+      lightweight (2kB gzipped). WebGL runs on the GPU, allowing for smooth,
+      high-frame-rate animations.
+    </p>
+
+    <p>
+      All animations on this page are generated on the fly with WebGL fragment
+      shaders using <code>quad-shader</code>, Vite and TypeScript.
     </p>
 
     <div class="canvas-container">
-      <canvas id="glcanvas-sphere"></canvas>
+      <canvas id="glcanvas-dots" />
     </div>
 
     <p>
       With fragment shaders, you have control over each pixel's color, making it
       perfect for Creative Coding and generating textures and patterns
-      procedurally.
+      procedurally. With a few lines of code, you can create intricate effects.
     </p>
 
-    <p>
-      WebGL runs on the GPU, allowing for smooth, high-frame-rate animations.
-      This template has <strong>no runtime dependencies</strong> and uses the
-      WebGL API directly.
+    <p
+      class="codepen"
+      data-height="600"
+      data-default-tab="result"
+      data-slug-hash="WbbERZW"
+      data-pen-title="Quad Shader Demo"
+      data-user="nmattia"
+      style="
+        height: 300px;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid;
+        margin: 1em 0;
+        padding: 1em;
+      "
+    >
+      <span
+        >See the Pen
+        <a href="https://codepen.io/nmattia/pen/WbbERZW"> Quad Shader Demo</a>
+        by Nicolas Mattia (<a href="https://codepen.io/nmattia">@nmattia</a>) on
+        <a href="https://codepen.io">CodePen</a>.</span
+      >
     </p>
+
+    <h2>Getting started with <code>quad-shader</code></h2>
+
+    <p>Let's take the following animation as an example:</p>
 
     <div class="canvas-container">
-      <canvas id="glcanvas-dots"></canvas>
+      <canvas id="glcanvas-waves" />
     </div>
+
     <p>
-      The colors used by the shaders are derived from the page's CSS properties
-      — open your devtools and have some fun. The technique used is described in
+      First install <code>quad-shader</code> with
+      <code>npm install quad-shader</code>.
+    </p>
+
+    <p>
+      After having installed the library, all it takes is (literally) three
+      lines of JavaScript and a fairly short fragment shader, inlined as a
+      string here for simplicity:
+    </p>
+
+    <script type="module">
+      import { animate, getComputedStylePropRGBA } from "./src";
+      const qs = animate(
+        document.querySelector("#glcanvas-waves"),
+        `
+        precision lowp float;
+        varying vec2 vPosition;
+        uniform vec4 uColor;
+        uniform float uTime;
+        void main() {
+            float theta = atan(vPosition.y, vPosition.x);
+            float rho = length(vPosition.xy);
+            float v = mod(rho - uTime/10., .2);
+            float alpha = smoothstep(.1, .2, v);
+            alpha *= (1. - smoothstep(0., 1., rho));
+            gl_FragColor = alpha * uColor;
+        }
+      `,
+      );
+      qs.uniform4f("uColor", () =>
+        getComputedStylePropRGBA(qs.canvas, "accent-color"),
+      );
+    </script>
+
+    <p id="code-example"></p>
+
+    <p>
+      Assuming you have a <code>canvas</code> element on the page, you should
+      see the animation. Congrats!
+    </p>
+
+    <p>
+      While it is fairly concise, this snippet includes some pretty powerful
+      features. First, the position of the current pixel is provided as
+      <code>vPosition</code>. Second, the value of the <code>uTime</code>
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html#uniforms"
+        ><em>uniform</em></a
+      >
+      will be continuously updated — this is done for you by
+      <code>quad-shader</code>'s <code>animate()</code> function.
+    </p>
+
+    <p>
+      By calling the <code>uniform4f</code> method on the object returned by
+      <code>animate()</code>, we could pass a static value to set the custom
+      <code>uColor</code> uniform. Though we can also register a callback (as is
+      done here) which will reflect the canvas' (inherited) CSS
+      <code>color</code> property at any given time — open your devtools and
+      have some fun modifying the properties on this page! The technique used is
+      described in
       <a
         href="https://nmattia.com/posts/2025-01-29-shader-css-properties/"
         target="_blank"
@@ -58,13 +157,73 @@
     </p>
 
     <p>
-      The code for this page and the quad-shader library is on GitHub at
+      All
       <a
         href="https://github.com/nmattia/quad-shader"
         target="_blank"
         rel="noopener noreferrer"
-        >nmattia/quad-shader</a
-      >.
+        ><code>uniform[1234][fi]</code></a
+      >
+      methods from WebGL are mirrored, using <code>quad-shader</code>'s simpler
+      API.
+    </p>
+
+    <div class="canvas-container">
+      <canvas id="glcanvas-sphere" />
+    </div>
+
+    <p>
+      Finally, and probably least obvious: the animation is only rendered when
+      the <code>canvas</code> element is on the screen! If you scroll past it
+      and the element exits the viewport, no frames will be rendered, saving on
+      GPU power. As soon as the element re-enters the viewport, animation will
+      resume, as if it had been running in the background.
+    </p>
+
+    <script type="module">
+      import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
+      const code = document.querySelector("#code-example");
+      codeToHtml(
+        // copied from the <script> above, with modifications:
+        // * module imported from "quad-shader" instead of "./src"
+        // * querySelector uses a generic "canvas"
+        // * "color" is used instead of "accent-color"
+        `import { animate, getComputedStylePropRGBA } from "quad-shader";
+const qs = animate(document.querySelector("canvas"), \`
+  precision lowp float;
+  varying vec2 vPosition;
+  uniform vec4 uColor;
+  uniform float uTime;
+  void main() {
+      float theta = atan(vPosition.y, vPosition.x);
+      float rho = length(vPosition.xy);
+      float v = mod(rho - uTime/10., .2);
+      float alpha *= smoothstep(.1, .2, v);
+      alpha *= (1. - smoothstep(0., 1., rho));
+      gl_FragColor = alpha * uColor;
+  }
+\`);
+qs.uniform4f("uColor", () => getComputedStylePropRGBA(qs.canvas, "color"));`,
+        {
+          lang: "ts",
+          theme: "rose-pine",
+        },
+      ).then((res) => (code.innerHTML = res));
+    </script>
+    <script
+      async
+      src="https://public.codepenassets.com/embed/index.js"
+    ></script>
+
+    <p>
+      For more information check out the code for this page
+      <a
+        href="https://github.com/nmattia/quad-shader"
+        target="_blank"
+        rel="noopener noreferrer"
+        >on GitHub</a
+      >
+      and give it a star if you like it!
     </p>
 
     <footer>
