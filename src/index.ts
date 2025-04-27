@@ -37,6 +37,7 @@ export class QuadShader {
 
   constructor(
     private gl: WebGLRenderingContext,
+    public canvas: HTMLCanvasElement,
     public state: State,
   ) {}
 
@@ -121,7 +122,7 @@ export function animate(
   const attached = attach(canvas, fragShaderSrc);
   const { state, gl } = attached;
 
-  const quadShader = new QuadShader(gl, state);
+  const quadShader = new QuadShader(gl, canvas, state);
 
   // Use an observer to start (resp. stop) the rendering loop whenver the canvas
   // enters (resp. exits) the viewport.
