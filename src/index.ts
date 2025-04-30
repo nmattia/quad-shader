@@ -366,11 +366,19 @@ function resizeIfDimChanged(gl: WebGLRenderingContext, state: State) {
 }
 
 // Parse an 'rgb(R, G, B)' (incl. alpha variations) string into numbers
-// (r, g, b & a between 0 and 1)
+// (r, g, b & a between 0 and 1).
+//
+// If the string cannot be parsed, returns [0,0,0,0].
 export const parseRGBA = (color: string): [number, number, number, number] => {
-  const rgb = color.match(
+  const m = color.match(
     /rgb(a?)\((?<r>\d+), (?<g>\d+), (?<b>\d+)(, (?<a>\d(.\d+)?))?\)/,
-  )!.groups as any as { r: string; g: string; b: string; a?: string };
+  );
+
+  const rgb = m?.groups;
+
+  if (!rgb) {
+    return [0, 0, 0, 0];
+  }
 
   return [
     Number(rgb.r) / 255,
