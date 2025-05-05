@@ -5,11 +5,14 @@
 // Only provides two uniforms: uTime (time in seconds since app start) and
 // uAspectRatio (ratio width/height of the canvas element). For more uniforms, use
 // the `uniformX` functions of `QuadShader`.
+//
+// NOTE: if the fragment shader uses uAspectRatio, it _must_ be the same precision
+// as defined here, otherwise Firefox complains.
 
 const vertShaderSrc = `
 attribute vec2 aVertexPosition;
 
-uniform float uAspectRatio;
+uniform mediump float uAspectRatio;
 varying vec2 vPosition;
 
 void main() {
