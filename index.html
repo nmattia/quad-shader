@@ -41,39 +41,13 @@
     </p>
 
     <div class="canvas-container">
-      <canvas id="glcanvas-dots" />
+      <canvas id="glcanvas-amoeba" />
     </div>
 
     <p>
       With fragment shaders, you have control over each pixel's color, making it
       perfect for Creative Coding and generating textures and patterns
       procedurally. With a few lines of code, you can create intricate effects.
-    </p>
-
-    <p
-      class="codepen"
-      data-height="600"
-      data-default-tab="result"
-      data-slug-hash="WbbERZW"
-      data-pen-title="Quad Shader Demo"
-      data-user="nmattia"
-      style="
-        height: 300px;
-        box-sizing: border-box;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid;
-        margin: 1em 0;
-        padding: 1em;
-      "
-    >
-      <span
-        >See the Pen
-        <a href="https://codepen.io/nmattia/pen/WbbERZW"> Quad Shader Demo</a>
-        by Nicolas Mattia (<a href="https://codepen.io/nmattia">@nmattia</a>) on
-        <a href="https://codepen.io">CodePen</a>.</span
-      >
     </p>
 
     <h2>Getting started with <code>quad-shader</code></h2>
@@ -126,10 +100,13 @@
       see the animation. Congrats!
     </p>
 
+    <h2>Passing inputs as uniforms</h2>
+
     <p>
-      While it is fairly concise, this snippet includes some pretty powerful
-      features. First, the position of the current pixel is provided as
-      <code>vPosition</code>. Second, the value of the <code>uTime</code>
+      While the snippet above is very concise, <code>quad-shader</code> includes
+      some pretty powerful features out of the box. First, the position of the
+      current pixel is provided as <code>vPosition</code>. Second, the value of
+      the <code>uTime</code>
       <a
         target="_blank"
         rel="noopener noreferrer"
@@ -140,14 +117,17 @@
       <code>quad-shader</code>'s <code>animate()</code> function.
     </p>
 
+    <div class="canvas-container">
+      <canvas id="glcanvas-sphere" />
+    </div>
+
     <p>
       By calling the <code>uniform4f</code> method on the object returned by
       <code>animate()</code>, we could pass a static value to set the custom
-      <code>uColor</code> uniform. Though we can also register a callback (as is
-      done here) which will reflect the canvas' (inherited) CSS
-      <code>color</code> property at any given time — open your devtools and
-      have some fun modifying the properties on this page! The technique used is
-      described in
+      <code>uColor</code> uniform. Though we can also register a callback which
+      will reflect the canvas' (inherited) CSS <code>color</code> property at
+      any given time — open your devtools and have some fun modifying the
+      properties on this page! The technique used is described in
       <a
         href="https://nmattia.com/posts/2025-01-29-shader-css-properties/"
         target="_blank"
@@ -168,8 +148,14 @@
       API.
     </p>
 
+    <p>
+      The uniform setters are a great way to make dynamic animations &mdash;
+      especially if you start reacting to browser events.
+      <strong>Try clicking this next animation</strong>!
+    </p>
+
     <div class="canvas-container">
-      <canvas id="glcanvas-sphere" />
+      <canvas id="glcanvas-dots" />
     </div>
 
     <p>
@@ -179,6 +165,29 @@
       GPU power. As soon as the element re-enters the viewport, animation will
       resume, as if it had been running in the background.
     </p>
+
+    <p>
+      For more information check out the code for this page
+      <a
+        href="https://github.com/nmattia/quad-shader"
+        target="_blank"
+        rel="noopener noreferrer"
+        >on GitHub</a
+      >
+      and give it a star if you like it!
+    </p>
+
+    <footer>
+      &copy;
+      <a href="https://nmattia.com" target="_blank" rel="noopener noreferrer"
+        >Nicolas Mattia</a
+      >
+      2025
+    </footer>
+    <script type="module">
+      import { main } from "./index.ts";
+      main();
+    </script>
 
     <script type="module">
       import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
@@ -209,33 +218,6 @@ qs.uniform4f("uColor", () => getComputedStylePropRGBA(qs.canvas, "color"));`,
           theme: "rose-pine",
         },
       ).then((res) => (code.innerHTML = res));
-    </script>
-    <script
-      async
-      src="https://public.codepenassets.com/embed/index.js"
-    ></script>
-
-    <p>
-      For more information check out the code for this page
-      <a
-        href="https://github.com/nmattia/quad-shader"
-        target="_blank"
-        rel="noopener noreferrer"
-        >on GitHub</a
-      >
-      and give it a star if you like it!
-    </p>
-
-    <footer>
-      &copy;
-      <a href="https://nmattia.com" target="_blank" rel="noopener noreferrer"
-        >Nicolas Mattia</a
-      >
-      2025
-    </footer>
-    <script type="module">
-      import { main } from "./index.ts";
-      main();
     </script>
   </body>
 </html>

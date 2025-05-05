@@ -1,64 +1,53 @@
 #define TAU 6.28318530718
 
-precision highp float;
+precision mediump float;
 
 varying vec2 vPosition;
 uniform float uTime;
-
-/* color used in the shader */
+uniform float uExtra;
 uniform vec4 uColPop;
 
-/* convert from polar to cartesian coordinates */
-vec2 polar(in vec2 uv) {
-    float theta = atan(uv.y, uv.x);
-    float rho = length(uv);
-    return vec2(rho, theta);
-}
+float get_opacity(vec2 uv) {
+        const float r = .01;
+        const float uSymmetries = 200.;
+        const int nSideDots = 8;
 
-/* convert from cartesian to polar coordinates */
-vec2 cart(in vec2 p) {
-    return vec2(p.x*cos(p.y), p.x*sin(p.y));
+        float a = TAU/uSymmetries;
+        float a2 = a/2.;
+
+        float theta = atan(uv.y, uv.x);
+        float rho = length(uv);
+
+        theta += a2;
+        float slice_ix = floor(theta/a);
+        theta = mod(theta + TAU, TAU);
+        theta = mod(theta, a);
+        theta -= a2; /* compensate for shift above */
+
+        uv = vec2(rho*cos(theta), rho*sin(theta));
+        uv.x -= .8;
+
+        float dist = .007;
+        dist += .002 * sin(3./17. * uTime * TAU + slice_ix/uSymmetries * TAU);
+        dist += .005 * sin(1./11. * uTime * TAU + slice_ix/uSymmetries * TAU);
+        dist = mix(dist, 1./32., uExtra);
+
+        float product = 1.;
+        for (int i = -nSideDots; i <= nSideDots; i ++) {
+            vec2 delta = vec2(float(i)*dist, 0.);
+            float v = length(uv + delta);
+            float ri = .98 * r;
+            float opacity = 1.;
+            opacity *= 1. - smoothstep(ri, r, v); /* blur edges */
+            opacity *= 1. - smoothstep(.2, 1., abs(float(i))/float(nSideDots)); /* outer dots less opaque */
+            product *= 1. - opacity;
+        }
+
+        return 1. - product;
 }
 
 void main() {
-
-    /* The absolute position, before any transformation */
-    vec2 uv = vec2(vPosition.x, vPosition.y);
-    vec2 p = polar(uv);
-
-    /* the whole image slowly */
-    p.y += uTime/7.;
-
-    float theta = p.y;
-    /* number of slices, i.e. symmetries/columns/etc. Picked to look
-     mostly continuous though with dots appearing sometimes. */
-    float rep =  360.;
-
-    /* Create the symmetries. By taking the mod of TAU/rep, we effectively
-       constrain the animation to a single slice which gets repeated (shifted every
-       time) */
-    p.y = mod(p.y + TAU/(2.*rep),TAU/rep) - TAU/(2.*rep);
-
-    uv = cart(p);
-
-    /* everything from now on is drawn as dots on the X axis (the symmetry stuff
-       is already handled above).
-
-       Here we shift by some (changing) value _to the right_, creating the
-       empty hole in the middle when replicated by the symmetries above. */
-    uv.x -= .2 + .1 * sin(uTime/13.);
-    uv.x -= .015 * (.5 + 4.*sin(uTime/17. + theta));
-
-    /* Starting from the X offset, we write _n_ dots, with the given size
-       and gap between dots. */
-    float size = 0.01 * (1. + .5 * sin(uTime/33.));
-    float gap = 1.5 * size * (1. + pow(sin(uTime + sin(theta)), 3.));
-
-    float factor_neg = 1.;
-    for(int i = 0; i < 15; i+=1) {
-        factor_neg *= step(size/2., length(uv));
-        uv.x -= gap;
-    }
-
-    gl_FragColor = (1. - factor_neg) * uColPop;
+        vec3 rgb = uColPop.rgb;
+        vec2 uv = vPosition.xy;
+        gl_FragColor = get_opacity(uv) * vec4(rgb, 1.);
 }
