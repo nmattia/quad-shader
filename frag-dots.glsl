@@ -49,5 +49,6 @@ float get_opacity(vec2 uv) {
 void main() {
         vec3 rgb = uColPop.rgb;
         vec2 uv = vPosition.xy;
-        gl_FragColor = get_opacity(uv) * vec4(rgb, 1.);
+        float fadeIn = smoothstep(0., 1., uTime);
+        gl_FragColor = fadeIn * get_opacity(uv) * vec4(rgb, 1.);
 }

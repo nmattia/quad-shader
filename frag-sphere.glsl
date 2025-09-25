@@ -74,5 +74,6 @@ vec4 getColor() {
 }
 
 void main() {
-    gl_FragColor = getColor();
+    float fadeIn = smoothstep(0., 1., uTime);
+    gl_FragColor = fadeIn * getColor();
 }

@@ -2,9 +2,9 @@
 // (square) spanning the whole canvas where the (fragment) shader's output is
 // rendered.
 //
-// Only provides two uniforms: uTime (time in seconds since app start) and
-// uAspectRatio (ratio width/height of the canvas element). For more uniforms, use
-// the `uniformX` functions of `QuadShader`.
+// Only provides two uniforms: uTime (time in seconds since quad-shader was created)
+// and uAspectRatio (ratio width/height of the canvas element). For more uniforms,
+// use the `uniformX` functions of `QuadShader`.
 //
 // NOTE: if the fragment shader uses uAspectRatio, it _must_ be the same precision
 // as defined here, otherwise Firefox complains.
@@ -152,7 +152,7 @@ export class QuadShader {
 
 // Return a 'QuadShader' with following properties:
 //  * The shader is only rendered when the underlying canvas intersects the viewport
-//  * The uTime uniform is set to the time since page load in seconds
+//  * The uTime uniform is set to the time quad-shader load in seconds
 export function animate(
   canvas: HTMLCanvasElement,
   fragShaderSrc: string,
@@ -182,7 +182,9 @@ export function animate(
 
   observer.observe(canvas);
 
-  quadShader.uniform1f("uTime", () => performance.now() / 1000);
+  /* uTime starts when the quad-shader was loaded */
+  const loadMillis = performance.now();
+  quadShader.uniform1f("uTime", () => (performance.now() - loadMillis) / 1000);
 
   return quadShader;
 }

@@ -60,5 +60,6 @@ void main() {
         uv.x -= gap;
     }
 
-    gl_FragColor = (1. - factor_neg) * uColPop;
+    float fadeIn = smoothstep(0., 1., uTime);
+    gl_FragColor = fadeIn * (1. - factor_neg) * uColPop;
 }
