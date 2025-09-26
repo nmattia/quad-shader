@@ -37,7 +37,8 @@
 
     <p>
       All animations on this page are generated on the fly with WebGL fragment
-      shaders using <code>quad-shader</code>, Vite and TypeScript.
+      shaders using <code>quad-shader</code>, Vite and TypeScript. See
+      <a href="#examples">below</a> for more animation examples.
     </p>
 
     <div class="canvas-container">
@@ -156,6 +157,58 @@
       >
       and give it a star if you like it!
     </p>
+
+    <hr />
+
+    <h2 id="examples"><a href="#examples">Examples</a></h2>
+    This section list some example usages of <code>quad-shader</code>.
+
+    <h3 id="plane-window"><a href="#plane-window">1. Plane Window</a></h3>
+
+    <div class="canvas-container">
+      <canvas id="glcanvas-plane-window" />
+    </div>
+
+    <details>
+      <summary>View js code</summary>
+      <p id="src-plane-window-js"></p>
+    </details>
+    <details>
+      <summary>View fragment code</summary>
+      <p id="src-plane-window-frag"></p>
+    </details>
+    <script type="module">
+      import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
+      import { animate, getComputedStylePropRGBA } from "./src";
+      import fragment from "./frag-waves.glsl?raw";
+
+      const canvas = document.querySelector("#glcanvas-plane-window");
+
+      // js setup code
+      const setup = () => {
+        const qs = animate(canvas, fragment);
+        qs.uniform4f("uColor", () =>
+          getComputedStylePropRGBA(qs.canvas, "accent-color"),
+        );
+      };
+      setup();
+      const srcFrag = document.querySelector("#src-plane-window-frag");
+      codeToHtml(fragment, { lang: "glsl", theme: "rose-pine" }).then(
+        (res) => (srcFrag.innerHTML = res),
+      );
+      const srcJs = document.querySelector("#src-plane-window-js");
+
+      // here we remove the indentation and the extra function bits: "() => {" and "}"
+      let src = setup.toString().split("\n");
+      const pref = Number(src[1].search(/\S/)); // count the number of leading spaces
+      src = src
+        .slice(1, src.length - 1)
+        .map((l) => l.slice(pref, l.length)) // remove leading spaces
+        .join("\n");
+      codeToHtml(src, { lang: "javascript", theme: "rose-pine" }).then(
+        (res) => (srcJs.innerHTML = res),
+      );
+    </script>
 
     <footer>
       &copy;
