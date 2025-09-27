@@ -4,7 +4,7 @@ uniform vec4 uColor;
 uniform float uTime;
 
 vec4 waves() {
-    // The pixel valueA (starting out transparent)
+    // The pixel value (starting out transparent)
     vec4 pixel = vec4(0., 0., 0., 0.);
 
     // ellipse equation; window is "1." inside the ellipse and "0." outside
@@ -35,7 +35,7 @@ vec4 waves() {
         bool inWave = vPosition.y < B + A * sin( -1. * w * vPosition.x + phi);
 
         // fade as we get further away
-        vec4 color = uColor * (1. - ((d - 1.)/10.));
+        vec4 color = uColor * (1. - (d - 1.)/10.);
         pixel = inWave ? color : pixel;
     }
 
