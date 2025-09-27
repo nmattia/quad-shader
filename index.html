@@ -55,7 +55,7 @@
     <p>Let's take the following animation as an example:</p>
 
     <div class="canvas-container">
-      <canvas id="glcanvas-waves" />
+      <canvas id="glcanvas-radial-waves" />
     </div>
 
     <p>
@@ -69,30 +69,7 @@
       string here for simplicity:
     </p>
 
-    <script type="module">
-      import { animate, getComputedStylePropRGBA } from "./src";
-      const qs = animate(
-        document.querySelector("#glcanvas-waves"),
-        `
-        precision lowp float;
-        varying vec2 vPosition;
-        uniform vec4 uColor;
-        uniform float uTime;
-        void main() {
-            float theta = atan(vPosition.y, vPosition.x);
-            float rho = length(vPosition.xy);
-            float v = mod(rho - uTime/10., .2);
-            float alpha = smoothstep(.1, .2, v);
-            alpha *= (1. - smoothstep(0., 1., rho));
-            float fadeIn = smoothstep(0., 1., uTime);
-            gl_FragColor = fadeIn * alpha * uColor;
-        }
-      `,
-      );
-      qs.uniform4f("uColor", () =>
-        getComputedStylePropRGBA(qs.canvas, "accent-color"),
-      );
-    </script>
+    <script type="module" src="examples/radial-waves/"></script>
 
     <p id="code-example"></p>
 
@@ -192,34 +169,12 @@
 
     <script type="module">
       import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
+      import { processLines } from "./index.ts";
+      import src from "./examples/radial-waves/index.ts?raw";
       const code = document.querySelector("#code-example");
-      codeToHtml(
-        // copied from the <script> above, with modifications:
-        // * module imported from "quad-shader" instead of "./src"
-        // * querySelector uses a generic "canvas"
-        // * "color" is used instead of "accent-color"
-        `import { animate, getComputedStylePropRGBA } from "quad-shader";
-const qs = animate(document.querySelector("canvas"), \`
-  precision lowp float;
-  varying vec2 vPosition;
-  uniform vec4 uColor;
-  uniform float uTime;
-  void main() {
-      float theta = atan(vPosition.y, vPosition.x);
-      float rho = length(vPosition.xy);
-      float v = mod(rho - uTime/10., .2);
-      float alpha = smoothstep(.1, .2, v);
-      alpha *= (1. - smoothstep(0., 1., rho));
-      float fadeIn = smoothstep(0., 1., uTime);
-      gl_FragColor = fadeIn * alpha * uColor;
-  }
-\`);
-qs.uniform4f("uColor", () => getComputedStylePropRGBA(qs.canvas, "color"));`,
-        {
-          lang: "ts",
-          theme: "rose-pine",
-        },
-      ).then((res) => (code.innerHTML = res));
+      codeToHtml(processLines(src), { lang: "ts", theme: "rose-pine" }).then(
+        (res) => (code.innerHTML = res),
+      );
     </script>
   </body>
 </html>

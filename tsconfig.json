@@ -18,7 +18,12 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "paths": {
+        "quad-shader": ["./src"]
+
+    }
   },
-  "include": ["src", "index.ts", "types.d.ts"]
+  "include": ["src", "index.ts", "types.d.ts", "examples"]
 }
