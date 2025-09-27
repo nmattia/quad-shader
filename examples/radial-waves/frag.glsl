@@ -10,7 +10,7 @@ void main() {
     float rho = length(vPosition.xy);
     float v = mod(rho - uTime/10., .2);
     float alpha = smoothstep(.1, .2, v);
-    alpha *= (1. - smoothstep(0., 1., rho));
+    alpha *= 1. - smoothstep(0., 1., rho);
     float fadeIn = smoothstep(0., 1., uTime);
     gl_FragColor = fadeIn * alpha * uColor;
 }
