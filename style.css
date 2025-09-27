@@ -118,7 +118,7 @@ a:visited {
 }
 
 a:hover {
-  color: #393e41;
+  color: var(--col-pop);
 }
 
 footer a:link,
