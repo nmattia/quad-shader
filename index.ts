@@ -61,3 +61,36 @@ export function main() {
     t = performance.now() / 1000;
   });
 }
+
+/*
+    Example source processing:
+
+      `// PROC: REMOVE` -> line is removed
+      `// PROC: REPLACE "foo" "bar"` -> "foo" is replaced with "bar" in line
+*/
+
+const RE_REMOVE = new RegExp("\\s*//\\s*PROC:\\s*REMOVE\\s*$");
+
+const RE_REPLACE = new RegExp(
+  "\\s*//\\s*PROC:\\s*REPLACE\\s+(\"|')(?<from>.*?)\\1\\s+(\"|')(?<to>.*?)\\3\\s*$",
+);
+
+export const processLines = (multiline: string): string => {
+  return multiline
+    .split("\n")
+    .map((line: string) => {
+      if (RE_REMOVE.test(line)) return null; // filter out "REMOVE" lines
+
+      const m = line.match(RE_REPLACE); // perform substitution for "REPLACE" lines
+      if (m) {
+        const { from, to } = m.groups!;
+        // keep only the code part, strip the directive (comment)
+        const body = line.slice(0, m.index);
+        return body.replace(from, to);
+      }
+
+      return line;
+    })
+    .filter(Boolean) // drop removed lines
+    .join("\n");
+};

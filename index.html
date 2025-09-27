@@ -52,54 +52,33 @@
 
     <h2>Getting started with <code>quad-shader</code></h2>
 
-    <p>Let's take the following animation as an example:</p>
+    <p>
+      We'll go through the steps required for displaying the following
+      animation:
+    </p>
 
     <div class="canvas-container">
-      <canvas id="glcanvas-waves" />
+      <canvas id="glcanvas-radial-waves" />
     </div>
 
-    <p>
-      First install <code>quad-shader</code> with
-      <code>npm install quad-shader</code>.
-    </p>
+    <p>First install <code>quad-shader</code>:</p>
 
-    <p>
-      After having installed the library, all it takes is (literally) three
-      lines of JavaScript and a fairly short fragment shader, inlined as a
-      string here for simplicity:
-    </p>
+    <p data-shiki-lang="bash">npm install quad-shader</p>
 
-    <script type="module">
-      import { animate, getComputedStylePropRGBA } from "./src";
-      const qs = animate(
-        document.querySelector("#glcanvas-waves"),
-        `
-        precision lowp float;
-        varying vec2 vPosition;
-        uniform vec4 uColor;
-        uniform float uTime;
-        void main() {
-            float theta = atan(vPosition.y, vPosition.x);
-            float rho = length(vPosition.xy);
-            float v = mod(rho - uTime/10., .2);
-            float alpha = smoothstep(.1, .2, v);
-            alpha *= (1. - smoothstep(0., 1., rho));
-            float fadeIn = smoothstep(0., 1., uTime);
-            gl_FragColor = fadeIn * alpha * uColor;
-        }
-      `,
-      );
-      qs.uniform4f("uColor", () =>
-        getComputedStylePropRGBA(qs.canvas, "accent-color"),
-      );
-    </script>
+    <p>Then include the following code in your page:</p>
+
+    <script type="module" src="examples/radial-waves/"></script>
 
     <p id="code-example"></p>
 
     <p>
-      Assuming you have a <code>canvas</code> element on the page, you should
-      see the animation. Congrats!
+      The <code>canvas</code> should be an <code>HTMLCanvasElement</code>. The
+      <code>frag</code> should be a string with the following content:
     </p>
+
+    <p id="code-example-glsl"></p>
+
+    <p>You should now see the animation on your page!</p>
 
     <h2>Passing inputs as uniforms</h2>
 
@@ -192,34 +171,32 @@
 
     <script type="module">
       import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
-      const code = document.querySelector("#code-example");
-      codeToHtml(
-        // copied from the <script> above, with modifications:
-        // * module imported from "quad-shader" instead of "./src"
-        // * querySelector uses a generic "canvas"
-        // * "color" is used instead of "accent-color"
-        `import { animate, getComputedStylePropRGBA } from "quad-shader";
-const qs = animate(document.querySelector("canvas"), \`
-  precision lowp float;
-  varying vec2 vPosition;
-  uniform vec4 uColor;
-  uniform float uTime;
-  void main() {
-      float theta = atan(vPosition.y, vPosition.x);
-      float rho = length(vPosition.xy);
-      float v = mod(rho - uTime/10., .2);
-      float alpha = smoothstep(.1, .2, v);
-      alpha *= (1. - smoothstep(0., 1., rho));
-      float fadeIn = smoothstep(0., 1., uTime);
-      gl_FragColor = fadeIn * alpha * uColor;
-  }
-\`);
-qs.uniform4f("uColor", () => getComputedStylePropRGBA(qs.canvas, "color"));`,
-        {
-          lang: "ts",
-          theme: "rose-pine",
-        },
-      ).then((res) => (code.innerHTML = res));
+
+      // helper that iterates over elements that specify a language as `shiki-lang`
+      // and processes the innerHTML with shiki
+      for (const elem of document.querySelectorAll("p[data-shiki-lang]")) {
+        const lang = elem.dataset.shikiLang;
+        const src = elem.innerHTML;
+
+        codeToHtml(src, { lang, theme: "rose-pine" }).then(
+          (res) => (elem.innerHTML = res),
+        );
+      }
+    </script>
+
+    <script type="module">
+      import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
+      import { processLines } from "./index.ts";
+      import src from "./examples/radial-waves/index.ts?raw";
+      const codeJs = document.querySelector("#code-example");
+      codeToHtml(processLines(src), { lang: "ts", theme: "rose-pine" }).then(
+        (res) => (codeJs.innerHTML = res),
+      );
+      const codeGLSL = document.querySelector("#code-example-glsl");
+      import srcGLSL from "./examples/radial-waves/frag.glsl?raw";
+      codeToHtml(srcGLSL, { lang: "glsl", theme: "rose-pine" }).then(
+        (res) => (codeGLSL.innerHTML = res),
+      );
     </script>
   </body>
 </html>
