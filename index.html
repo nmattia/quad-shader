@@ -37,7 +37,8 @@
 
     <p>
       All animations on this page are generated on the fly with WebGL fragment
-      shaders using <code>quad-shader</code>, Vite and TypeScript.
+      shaders using <code>quad-shader</code>, Vite and TypeScript. See
+      <a href="#examples">below</a> for more animation examples.
     </p>
 
     <div class="canvas-container">
@@ -78,7 +79,10 @@
 
     <p id="code-example-glsl"></p>
 
-    <p>You should now see the animation on your page!</p>
+    <p>
+      You should now see the animation on your page! There are more examples in
+      the <a href="#examples">Examples section</a>.
+    </p>
 
     <h2>Passing inputs as uniforms</h2>
 
@@ -156,6 +160,42 @@
       >
       and give it a star if you like it!
     </p>
+
+    <hr />
+
+    <h2 id="examples"><a href="#examples">Examples</a></h2>
+    This section list some example usages of <code>quad-shader</code>.
+
+    <h3 id="plane-window"><a href="#plane-window">1. Plane Window</a></h3>
+
+    <div class="canvas-container">
+      <canvas id="glcanvas-plane-window" />
+    </div>
+
+    <details>
+      <summary>View js code</summary>
+      <p id="src-plane-window-js"></p>
+    </details>
+    <details>
+      <summary>View fragment code</summary>
+      <p id="src-plane-window-glsl"></p>
+    </details>
+
+    <script type="module" src="examples/plane-window/"></script>
+    <script type="module">
+      import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
+      import { processLines } from "./index.ts";
+      import src from "./examples/plane-window/index.ts?raw";
+      const codeJs = document.querySelector("#src-plane-window-js");
+      codeToHtml(processLines(src), { lang: "ts", theme: "rose-pine" }).then(
+        (res) => (codeJs.innerHTML = res),
+      );
+      const codeGLSL = document.querySelector("#src-plane-window-glsl");
+      import srcGLSL from "./examples/plane-window/frag.glsl?raw";
+      codeToHtml(srcGLSL, { lang: "glsl", theme: "rose-pine" }).then(
+        (res) => (codeGLSL.innerHTML = res),
+      );
+    </script>
 
     <footer>
       &copy;
