@@ -32,7 +32,7 @@ vec4 waves() {
 
         // the angular frequency (found empirically)
         float w = d * 2. / 5. + 13./5.;
-        bool inWave = vPosition.y < B + A * sin( - 1. * w * vPosition.x + phi);
+        bool inWave = vPosition.y < B + A * sin( -1. * w * vPosition.x + phi);
 
         // fade as we get further away
         vec4 color = uColor * (1. - ((d - 1.)/10.));
