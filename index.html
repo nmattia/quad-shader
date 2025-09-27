@@ -58,10 +58,9 @@
       <canvas id="glcanvas-radial-waves" />
     </div>
 
-    <p>
-      First install <code>quad-shader</code> with
-      <code>npm install quad-shader</code>.
-    </p>
+    <p>First install <code>quad-shader</code>:</p>
+
+    <p data-shiki-lang="bash">npm install quad-shader</p>
 
     <p>
       After having installed the library, all it takes is (literally) three
@@ -72,6 +71,10 @@
     <script type="module" src="examples/radial-waves/"></script>
 
     <p id="code-example"></p>
+
+    <p>Here is the fragment shader implementation;</p>
+
+    <p id="code-example-glsl"></p>
 
     <p>
       Assuming you have a <code>canvas</code> element on the page, you should
@@ -169,11 +172,29 @@
 
     <script type="module">
       import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
+
+      for (const elem of document.querySelectorAll("p[data-shiki-lang]")) {
+        const lang = elem.dataset.shikiLang;
+        const src = elem.innerHTML;
+
+        codeToHtml(src, { lang, theme: "rose-pine" }).then(
+          (res) => (elem.innerHTML = res),
+        );
+      }
+    </script>
+
+    <script type="module">
+      import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
       import { processLines } from "./index.ts";
       import src from "./examples/radial-waves/index.ts?raw";
-      const code = document.querySelector("#code-example");
+      const codeJs = document.querySelector("#code-example");
       codeToHtml(processLines(src), { lang: "ts", theme: "rose-pine" }).then(
-        (res) => (code.innerHTML = res),
+        (res) => (codeJs.innerHTML = res),
+      );
+      const codeGLSL = document.querySelector("#code-example-glsl");
+      import srcGLSL from "./examples/radial-waves/frag.glsl?raw";
+      codeToHtml(srcGLSL, { lang: "glsl", theme: "rose-pine" }).then(
+        (res) => (codeGLSL.innerHTML = res),
       );
     </script>
   </body>
