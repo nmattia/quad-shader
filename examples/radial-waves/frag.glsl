@@ -1,4 +1,3 @@
-// frag.glsl
 precision lowp float;
 
 varying vec2 vPosition; /* pixel position, X & Y in [-1, +1] */

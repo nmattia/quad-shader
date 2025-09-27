@@ -52,7 +52,10 @@
 
     <h2>Getting started with <code>quad-shader</code></h2>
 
-    <p>Let's take the following animation as an example:</p>
+    <p>
+      We'll go through the steps required for displaying the following
+      animation:
+    </p>
 
     <div class="canvas-container">
       <canvas id="glcanvas-radial-waves" />
@@ -62,24 +65,20 @@
 
     <p data-shiki-lang="bash">npm install quad-shader</p>
 
-    <p>
-      After having installed the library, all it takes is (literally) three
-      lines of JavaScript and a fairly short fragment shader, inlined as a
-      string here for simplicity:
-    </p>
+    <p>Then include the following code in your page:</p>
 
     <script type="module" src="examples/radial-waves/"></script>
 
     <p id="code-example"></p>
 
-    <p>Here is the fragment shader implementation;</p>
+    <p>
+      The <code>canvas</code> should be an <code>HTMLCanvasElement</code>. The
+      <code>frag</code> should be a string with the following content:
+    </p>
 
     <p id="code-example-glsl"></p>
 
-    <p>
-      Assuming you have a <code>canvas</code> element on the page, you should
-      see the animation. Congrats!
-    </p>
+    <p>You should now see the animation on your page!</p>
 
     <h2>Passing inputs as uniforms</h2>
 
@@ -173,6 +172,8 @@
     <script type="module">
       import { codeToHtml } from "https://esm.sh/shiki@3.0.0";
 
+      // helper that iterates over elements that specify a language as `shiki-lang`
+      // and processes the innerHTML with shiki
       for (const elem of document.querySelectorAll("p[data-shiki-lang]")) {
         const lang = elem.dataset.shikiLang;
         const src = elem.innerHTML;
