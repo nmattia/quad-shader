@@ -1,10 +1,12 @@
 {
   "extends": "./tsconfig.json",
+  /* merges (potentially overriding) with .extends */
   "compilerOptions": {
     "noEmit": false,
+    "outDir": "dist/lib",
     "declaration": true,
-    "emitDeclarationOnly": true,
     "declarationDir": "dist/types"
   },
+  /* replaces the values in .extends */
   "include": ["src/index.ts" ]
 }

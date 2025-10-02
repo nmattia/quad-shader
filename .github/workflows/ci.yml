@@ -37,14 +37,15 @@ jobs:
         with:
           path: './dist/pages' # vite's outDir as specified in package.json
 
-        # build the .tgz in ./out and upload as artifact
+        # build the .tgz in ./out and upload as artifact (so non-release commit can
+        # be tested out)
       - name: Build library
         run: mkdir -p ./out && npm pack --pack-destination ./out
       - name: Upload lib artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: './out'
           name: lib
+          path: './out'
 
 
   # Single deploy job since we're just deploying
