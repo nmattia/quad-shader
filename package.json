@@ -5,26 +5,24 @@
   "files": [
     "README.md",
     "LICENSE",
-    "dist/lib/quad-shader.js",
-    "dist/lib/quad-shader.cjs",
+    "dist/lib/index.js",
     "dist/types/index.d.ts"
   ],
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "default": "./dist/lib/quad-shader.js"
+      "default": "./dist/lib/index.js"
     }
   },
   "//scripts": {
     "dev, build & preview": "build the webapp (e.g. for GitHub Pages deployment)",
-    "types & prepare": "build the lib, to be used by 'npm publish' or 'npm pack'"
+    "prepare": "build the lib, to be used by 'npm publish' or 'npm pack'"
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc --project tsconfig.json && vite build --config /dev/null --outDir ./dist/pages",
+    "build": "tsc --project tsconfig.json && vite build --outDir ./dist/pages",
     "preview": "npm run build && vite preview --outDir ./dist/pages",
-    "prepare": "npm run types && vite build --outDir ./dist/lib",
-    "types": "tsc --project ./tsconfig.lib.json",
+    "prepare": "tsc --project ./tsconfig.lib.json",
     "format": "prettier ./src ./index.ts ./index.html ./style.css ./package.json vite.config.ts -w"
   },
   "devDependencies": {

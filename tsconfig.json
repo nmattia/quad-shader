@@ -8,8 +8,6 @@
 
     /* Bundler mode */
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
@@ -22,7 +20,6 @@
 
     "paths": {
         "quad-shader": ["./src"]
-
     }
   },
   "include": ["src", "index.ts", "types.d.ts", "examples"]
