@@ -20,7 +20,8 @@
 
     "paths": {
         "quad-shader": ["./src"]
-    }
+    },
+    "types": [ "node"]
   },
-  "include": ["src", "index.ts", "types.d.ts", "examples"]
+  "include": ["src", "index.ts", "types.d.ts", "examples", "plugin.ts"]
 }

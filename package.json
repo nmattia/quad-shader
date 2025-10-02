@@ -23,11 +23,18 @@
     "build": "tsc --project tsconfig.json && vite build --outDir ./dist/pages",
     "preview": "npm run build && vite preview --outDir ./dist/pages",
     "prepare": "tsc --project ./tsconfig.lib.json",
-    "format": "prettier ./src ./index.ts ./index.html ./style.css ./package.json vite.config.ts -w"
+    "format": "prettier ./src ./index.ts ./plugin.ts ./index.html ./style.css ./package.json vite.config.ts -w"
   },
   "devDependencies": {
+    "@types/hast": "^3.0.4",
+    "@types/node": "^24.6.2",
     "prettier": "^3.3.3",
-    "typescript": "^5.2.2",
+    "rehype-parse": "^9.0.1",
+    "rehype-stringify": "^10.0.1",
+    "shiki": "^3.13.0",
+    "typescript": "^5.5.4",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.0.0",
     "vite": "^6.3.3"
   }
 }
