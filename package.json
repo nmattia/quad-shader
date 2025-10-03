@@ -2,6 +2,15 @@
   "name": "quad-shader",
   "version": "0.0.5",
   "description": "Zero-deps library for creating WebGL-based applications using Vite and TypeScript",
+  "homepage": "https://nmattia.github.io/quad-shader/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nmattia/quad-shader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nmattia/quad-shader"
+  },
+  "license": "MIT",
   "type": "module",
   "files": [
     "README.md",
