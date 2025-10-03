@@ -21,7 +21,7 @@ npm run build
 ## Package the library
 
 ```
-npm prepare # or npm pack to see the .tgz
+npm run prepare # or npm pack to see the .tgz
 ```
 
 or alternatively, publish it:
