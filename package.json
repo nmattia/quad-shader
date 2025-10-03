@@ -1,6 +1,7 @@
 {
   "name": "quad-shader",
   "version": "0.0.5",
+  "description": "Zero-deps library for creating WebGL-based applications using Vite and TypeScript",
   "type": "module",
   "files": [
     "README.md",
