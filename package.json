@@ -1,6 +1,13 @@
 {
   "name": "quad-shader",
   "version": "0.0.5",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nmattia/quad-shader.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nmattia/quad-shader"
+  },
   "license": "MIT",
   "type": "module",
   "files": [
