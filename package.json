@@ -1,6 +1,7 @@
 {
   "name": "quad-shader",
   "version": "0.0.5",
+  "homepage": "https://nmattia.github.io/quad-shader/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nmattia/quad-shader.git"
