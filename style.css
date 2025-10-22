@@ -91,6 +91,8 @@ pre.shiki {
 
 .canvas-container {
   padding: var(--pad-big) 0;
+  /* ensure examples don't break the page */
+  overflow: hidden;
 }
 
 canvas {
