@@ -86,7 +86,7 @@ export default function shikiHighlight(): Plugin {
       /* created here so that the visitor below doesn't have to be async */
       const highlighter = await createHighlighter({
         themes: [SHIKI_THEME],
-        langs: ["glsl", "ts", "bash"],
+        langs: ["glsl", "ts", "bash", "css"],
       });
 
       const tree = unified().use(rehypeParse).parse(html);
