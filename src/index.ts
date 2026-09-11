@@ -299,10 +299,12 @@ function initializeProgram(
   gl.linkProgram(program);
 
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    const progInfoLog =
+      gl.getProgramInfoLog(program) ?? "could not link program";
     gl.deleteShader(vertShader);
     gl.deleteShader(fragShader);
     gl.deleteProgram(program);
-    throw new Error(gl.getProgramInfoLog(program) ?? "could not link program");
+    throw new Error(progInfoLog);
   }
 
   // Tell WebGL which shader program we're about to setup & use (here and throughout
