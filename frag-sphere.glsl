@@ -1,14 +1,18 @@
+#version 300 es
+
 /* Fragment shader that draws a fancy animation */
 
 precision highp float;
 
-varying vec2 vPosition;
+in vec2 vPosition;
 
 uniform float uTime;
 
 /* colors used in the shader */
 uniform vec4 uColPrimary;
 uniform vec4 uColPop;
+
+out vec4 outputColor;
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -75,5 +79,5 @@ vec4 getColor() {
 
 void main() {
     float fadeIn = smoothstep(0., 1., uTime);
-    gl_FragColor = fadeIn * getColor();
+    outputColor = fadeIn * getColor();
 }

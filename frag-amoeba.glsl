@@ -1,9 +1,13 @@
+#version 300 es
+
 #define TAU 6.28318530718
 
 precision highp float;
 
-varying vec2 vPosition;
+in vec2 vPosition;
 uniform float uTime;
+
+out vec4 outputColor;
 
 /* color used in the shader */
 uniform vec4 uColPop;
@@ -61,5 +65,5 @@ void main() {
     }
 
     float fadeIn = smoothstep(0., 1., uTime);
-    gl_FragColor = fadeIn * (1. - factor_neg) * uColPop;
+    outputColor = fadeIn * (1. - factor_neg) * uColPop;
 }
