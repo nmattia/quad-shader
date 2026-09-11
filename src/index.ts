@@ -9,11 +9,11 @@
 // NOTE: if the fragment shader uses uAspectRatio, it _must_ be the same precision
 // as defined here, otherwise Firefox complains.
 
-const vertShaderSrc = `
-attribute vec2 aVertexPosition;
+const vertShaderSrc = `#version 300 es
+in vec2 aVertexPosition;
 
 uniform mediump float uAspectRatio;
-varying vec2 vPosition;
+out vec2 vPosition;
 
 void main() {
     // gl_Position is the ouput, which we simply return
@@ -197,7 +197,7 @@ export function attach(
   fragShaderSrc: string,
 ): Attached {
   // Get the WebGL context
-  const gl = canvas.getContext("webgl");
+  const gl = canvas.getContext("webgl2");
   if (!gl) throw new Error("Could not initialize WebGL");
 
   // Prepare the shaders. We pass in the shaders as strings, imported using Vite's

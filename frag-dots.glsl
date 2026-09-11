@@ -1,11 +1,15 @@
+#version 300 es
+
 #define TAU 6.28318530718
 
 precision mediump float;
 
-varying vec2 vPosition;
+in vec2 vPosition;
 uniform float uTime;
 uniform float uExtra;
 uniform vec4 uColPop;
+
+out vec4 outputColor;
 
 float get_opacity(vec2 uv) {
         const float r = .01;
@@ -50,5 +54,5 @@ void main() {
         vec3 rgb = uColPop.rgb;
         vec2 uv = vPosition.xy;
         float fadeIn = smoothstep(0., 1., uTime);
-        gl_FragColor = fadeIn * get_opacity(uv) * vec4(rgb, 1.);
+        outputColor = fadeIn * get_opacity(uv) * vec4(rgb, 1.);
 }
