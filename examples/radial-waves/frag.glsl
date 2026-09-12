@@ -1,8 +1,12 @@
+#version 300 es
+
 precision lowp float;
 
-varying vec2 vPosition; /* pixel position, X & Y in [-1, +1] */
+in vec2 vPosition; /* pixel position, X & Y in [-1, +1] */
 uniform vec4 uColor; /* injected from JS */
 uniform float uTime; /* time in seconds since canvas loaded */
+
+out vec4 outputColor;
 
 // Animation code
 void main() {
@@ -12,5 +16,5 @@ void main() {
     float alpha = smoothstep(.1, .2, v);
     alpha *= 1. - smoothstep(0., 1., rho);
     float fadeIn = smoothstep(0., 1., uTime);
-    gl_FragColor = fadeIn * alpha * uColor;
+    outputColor = fadeIn * alpha * uColor;
 }
