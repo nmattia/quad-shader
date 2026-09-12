@@ -1,7 +1,11 @@
+#version 300 es
+
 precision lowp float;
-varying vec2 vPosition;
+in vec2 vPosition;
 uniform vec4 uColor;
 uniform float uTime;
+
+out vec4 outputColor;
 
 vec4 waves() {
     // The pixel value (starting out transparent)
@@ -46,5 +50,5 @@ vec4 waves() {
 
 void main() {
     float fadeIn = smoothstep(0., 1., uTime);
-    gl_FragColor = fadeIn * waves();
+    outputColor = fadeIn * waves();
 }

@@ -1,12 +1,15 @@
+#version 300 es
 
 #define TAU 6.28318530718
 
 precision mediump float;
 
-varying vec2 vPosition;
+in vec2 vPosition;
 
 uniform vec4 uColor;
 uniform float uTime;
+
+out vec4 outputColor;
 
 const float n_slices = 25.; // how many radial slices to draw
 const float R = .07; // Reference radius
@@ -43,5 +46,5 @@ float get_opacity(vec2 uv) {
 }
 
 void main() {
-    gl_FragColor = get_opacity(vPosition) * uColor;
+    outputColor = get_opacity(vPosition) * uColor;
 }
